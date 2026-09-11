@@ -109,4 +109,12 @@ const handler = createMcpHandler((server) => {
   );
 });
 
-export { handler as GET, handler as POST };
+async function withAuth(request) {
+  const key = request.headers.get('x-api-key');
+  if (key !== process.env.MCP_API_KEY) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+  return handler(request);
+}
+
+export { withAuth as GET, withAuth as POST };
