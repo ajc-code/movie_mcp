@@ -3,11 +3,16 @@ import { z } from 'zod';
 import { supabase } from '../lib/supabase.js';
 
 const handler = createMcpHandler((server) => {
-  server.tool(
+  server.registerTool(
     'add_movie',
-    'Add a new movie to the watchlist. Use when the user asks to add, ' +
-    'save, or note down a movie they want to watch.',
-    { title: z.string().describe('The movie title, e.g. "Oppenheimer"') },
+    {
+      title: 'Add Movie',
+      description: 'Add a new movie to the watchlist. Use when the user asks to add, ' +
+        'save, or note down a movie they want to watch.',
+      inputSchema: z.object({
+        title: z.string().describe('The movie title, e.g. "Oppenheimer"'),
+      }),
+    },
     async ({ title }) => {
       const { error } = await supabase
         .from('movies')
@@ -17,11 +22,16 @@ const handler = createMcpHandler((server) => {
     }
   );
 
-  server.tool(
+  server.registerTool(
     'mark_watched',
-    'Mark a movie as watched. Use when the user says they watched, ' +
-    'finished, or saw a movie that is on their list.',
-    { title: z.string().describe('The movie title to mark as watched') },
+    {
+      title: 'Mark Watched',
+      description: 'Mark a movie as watched. Use when the user says they watched, ' +
+        'finished, or saw a movie that is on their list.',
+      inputSchema: z.object({
+        title: z.string().describe('The movie title to mark as watched'),
+      }),
+    },
     async ({ title }) => {
       const { error } = await supabase
         .from('movies')
@@ -32,11 +42,16 @@ const handler = createMcpHandler((server) => {
     }
   );
 
-  server.tool(
+  server.registerTool(
     'toggle_favourite',
-    'Mark or unmark a movie as a favourite. Use when the user says they ' +
-    'loved, favourited, or wants to unfavourite a movie.',
-    { title: z.string().describe('The movie title to toggle') },
+    {
+      title: 'Toggle Favourite',
+      description: 'Mark or unmark a movie as a favourite. Use when the user says they ' +
+        'loved, favourited, or wants to unfavourite a movie.',
+      inputSchema: z.object({
+        title: z.string().describe('The movie title to toggle'),
+      }),
+    },
     async ({ title }) => {
       const { data } = await supabase
         .from('movies')
@@ -52,11 +67,14 @@ const handler = createMcpHandler((server) => {
     }
   );
 
-  server.tool(
+  server.registerTool(
     'get_watchlist',
-    'Get the list of movies not yet watched. Use when the user asks ' +
-    'what to watch, or what is on their list.',
-    {},
+    {
+      title: 'Get Watchlist',
+      description: 'Get the list of movies not yet watched. Use when the user asks ' +
+        'what to watch, or what is on their list.',
+      inputSchema: z.object({}),
+    },
     async () => {
       const { data, error } = await supabase
         .from('movies')
@@ -68,11 +86,16 @@ const handler = createMcpHandler((server) => {
     }
   );
 
-  server.tool(
+  server.registerTool(
     'get_recent',
-    'Get the most recently watched movies. Use when the user asks what ' +
-    'they have watched lately or recently.',
-    { n: z.number().describe('How many recent movies to return').default(10) },
+    {
+      title: 'Get Recent',
+      description: 'Get the most recently watched movies. Use when the user asks what ' +
+        'they have watched lately or recently.',
+      inputSchema: z.object({
+        n: z.number().describe('How many recent movies to return').default(10),
+      }),
+    },
     async ({ n }) => {
       const { data, error } = await supabase
         .from('movies')
